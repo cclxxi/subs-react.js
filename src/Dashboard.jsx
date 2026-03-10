@@ -11,6 +11,7 @@ const Dashboard = ({ onLogout }) => {
     const [cards, setCards] = useState([]);
     const [subs, setSubs] = useState([]);
     const [upcoming, setUpcoming] = useState([]);
+    const [selectedCurrency, setSelectedCurrency] = useState(() => localStorage.getItem('preferredCurrency') || 'USD');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isCardModalOpen, setIsCardModalOpen] = useState(false);
@@ -56,13 +57,17 @@ const Dashboard = ({ onLogout }) => {
         };
     }, [refreshData, toast]);
 
+    useEffect(() => {
+        localStorage.setItem('preferredCurrency', selectedCurrency);
+    }, [selectedCurrency]);
+
     const totalMonthly = useMemo(() => {
         return subs.reduce((sum, item) => {
             const periodicity = String(item.periodicity || '').toUpperCase();
-            if (periodicity === 'MONTHLY') return sum + Number(item.price || 0);
-            return sum;
+            if (periodicity !== 'MONTHLY') return sum;
+            return sum + convertAmount(Number(item.price || 0), item.currency, selectedCurrency);
         }, 0);
-    }, [subs]);
+    }, [subs, selectedCurrency]);
 
     const handleDeleteSub = async (id) => {
         try {
@@ -110,7 +115,7 @@ const Dashboard = ({ onLogout }) => {
                         <NavItem label="Дашборд" active />
                         <NavItem label={`Карт: ${cards.length}`} />
                         <NavItem label={`Подписок: ${subs.length}`} />
-                        <NavItem label={`Ежемес: $${totalMonthly.toFixed(2)}`} />
+                        <NavItem label={`Ежемес: ${formatMoney(totalMonthly, selectedCurrency)}`} />
                     </nav>
                 </div>
 
@@ -129,6 +134,15 @@ const Dashboard = ({ onLogout }) => {
                         <p className="text-gray-400 font-medium mt-1">Твои подписки под контролем.</p>
                     </div>
                     <div className="flex gap-3">
+                        <select
+                            value={selectedCurrency}
+                            onChange={(e) => setSelectedCurrency(e.target.value)}
+                            className="px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-semibold text-gray-700 outline-none focus:ring-2 focus:ring-indigo-500"
+                        >
+                            {SUPPORTED_CURRENCIES.map((currency) => (
+                                <option key={currency} value={currency}>{currency}</option>
+                            ))}
+                        </select>
                         <Motion.button
                             whileHover={{ scale: 1.02, y: -2 }}
                             whileTap={{ scale: 0.98 }}
@@ -214,7 +228,12 @@ const Dashboard = ({ onLogout }) => {
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-xl font-black text-gray-900">${Number(sub.price || 0).toFixed(2)}</p>
+                                            <p className="text-xl font-black text-gray-900">
+                                                {formatMoney(convertAmount(Number(sub.price || 0), sub.currency, selectedCurrency), selectedCurrency)}
+                                            </p>
+                                            <p className="text-[11px] text-gray-400 mt-1">
+                                                {formatMoney(Number(sub.price || 0), normalizeCurrency(sub.currency))}
+                                            </p>
                                             <div className="flex gap-3 justify-end mt-1">
                                                 <button
                                                     type="button"
@@ -246,7 +265,9 @@ const Dashboard = ({ onLogout }) => {
                                     {upcoming.slice(0, 5).map((item) => (
                                         <div key={item.id} className="bg-white border border-gray-100 rounded-2xl p-4 flex justify-between">
                                             <span className="font-medium text-gray-800">{item.service || item.name || 'Без названия'}</span>
-                                            <span className="font-bold text-indigo-600">${Number(item.price || 0).toFixed(2)}</span>
+                                            <span className="font-bold text-indigo-600">
+                                                {formatMoney(convertAmount(Number(item.price || 0), item.currency, selectedCurrency), selectedCurrency)}
+                                            </span>
                                         </div>
                                     ))}
                                 </div>
@@ -298,6 +319,39 @@ const EmptyState = ({ text }) => (
         <p className="text-gray-400 text-sm font-medium">{text}</p>
     </div>
 );
+
+const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'RUB', 'KGS', 'KZT'];
+
+const FX_TO_USD = {
+    USD: 1,
+    EUR: 1.08,
+    RUB: 0.011,
+    KGS: 0.011,
+    KZT: 0.0021,
+};
+
+const normalizeCurrency = (currency) => {
+    const code = String(currency || 'USD').toUpperCase();
+    return SUPPORTED_CURRENCIES.includes(code) ? code : 'USD';
+};
+
+const convertAmount = (amount, fromCurrency, toCurrency) => {
+    const from = normalizeCurrency(fromCurrency);
+    const to = normalizeCurrency(toCurrency);
+    const numericAmount = Number(amount || 0);
+
+    const inUsd = numericAmount * FX_TO_USD[from];
+    return inUsd / FX_TO_USD[to];
+};
+
+const formatMoney = (amount, currency) => {
+    const code = normalizeCurrency(currency);
+    return new Intl.NumberFormat('ru-RU', {
+        style: 'currency',
+        currency: code,
+        maximumFractionDigits: 2,
+    }).format(Number(amount || 0));
+};
 
 const PERIODICITY_LABELS = {
     DAILY: 'раз в день',

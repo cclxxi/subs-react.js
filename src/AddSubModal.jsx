@@ -12,7 +12,7 @@ const PERIODICITY_OPTIONS = [
     { value: 'SEMIANNUALLY', label: 'Раз в полгода' },
 ];
 
-const CURRENCY_OPTIONS = ['USD', 'EUR', 'RUB'];
+const CURRENCY_OPTIONS = ['USD', 'EUR', 'RUB', 'KGS', 'KZT'];
 
 const AddSubModal = ({ isOpen, onClose, onAdded, cards }) => {
     const toast = useToast();
