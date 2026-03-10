@@ -1,4 +1,4 @@
-const BASE_URL = "subs-expressjs-production.up.railway.app/api";
+const BASE_URL = "https://subs-expressjs-production.up.railway.app/api";
 
 const getToken = () => localStorage.getItem('token');
 
