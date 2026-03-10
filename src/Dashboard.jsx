@@ -204,10 +204,10 @@ const Dashboard = ({ onLogout }) => {
                                     >
                                         <div className="flex items-center gap-5">
                                             <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-xl shadow-inner">
-                                                {getEmoji(sub.name)}
+                                                {getEmoji(sub.service || sub.name)}
                                             </div>
                                             <div>
-                                                <p className="font-bold text-gray-900 text-lg">{sub.name}</p>
+                                                <p className="font-bold text-gray-900 text-lg">{sub.service || sub.name || 'Без названия'}</p>
                                                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                                                     {formatPeriodicity(sub.periodicity)} {sub.status ? `• ${sub.status}` : ''}
                                                 </p>
@@ -245,7 +245,7 @@ const Dashboard = ({ onLogout }) => {
                                 <div className="space-y-2">
                                     {upcoming.slice(0, 5).map((item) => (
                                         <div key={item.id} className="bg-white border border-gray-100 rounded-2xl p-4 flex justify-between">
-                                            <span className="font-medium text-gray-800">{item.name}</span>
+                                            <span className="font-medium text-gray-800">{item.service || item.name || 'Без названия'}</span>
                                             <span className="font-bold text-indigo-600">${Number(item.price || 0).toFixed(2)}</span>
                                         </div>
                                     ))}

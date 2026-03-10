@@ -12,11 +12,15 @@ const PERIODICITY_OPTIONS = [
     { value: 'SEMIANNUALLY', label: 'Раз в полгода' },
 ];
 
+const CURRENCY_OPTIONS = ['USD', 'EUR', 'RUB'];
+
 const AddSubModal = ({ isOpen, onClose, onAdded, cards }) => {
     const toast = useToast();
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [periodicity, setPeriodicity] = useState('MONTHLY');
+    const [currency, setCurrency] = useState('USD');
+    const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0, 10));
     const [cardId, setCardId] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -27,6 +31,8 @@ const AddSubModal = ({ isOpen, onClose, onAdded, cards }) => {
         setName('');
         setPrice('');
         setPeriodicity('MONTHLY');
+        setCurrency('USD');
+        setStartDate(new Date().toISOString().slice(0, 10));
         setCardId('');
         setError('');
     };
@@ -60,9 +66,12 @@ const AddSubModal = ({ isOpen, onClose, onAdded, cards }) => {
 
         try {
             await dataService.createSubscription({
+                service: name.trim(),
                 name: name.trim(),
                 price: Number(price),
                 periodicity,
+                currency,
+                startDate,
                 cardId,
             });
             await onAdded();
@@ -142,6 +151,32 @@ const AddSubModal = ({ isOpen, onClose, onAdded, cards }) => {
                                         </option>
                                     ))}
                                 </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold uppercase text-gray-400 mb-1 ml-1">Валюта</label>
+                                <select
+                                    value={currency}
+                                    onChange={(e) => setCurrency(e.target.value)}
+                                    className="w-full px-5 py-4 bg-gray-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                >
+                                    {CURRENCY_OPTIONS.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold uppercase text-gray-400 mb-1 ml-1">Дата начала</label>
+                                <input
+                                    type="date"
+                                    required
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className="w-full px-5 py-4 bg-gray-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                />
                             </div>
 
                             <div>

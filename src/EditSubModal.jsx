@@ -46,7 +46,7 @@ const EditSubModal = ({ isOpen, onClose, onUpdated, cards, subscriptionId }) => 
                 const sub = await dataService.getSubscriptionById(subscriptionId);
                 if (!mounted || !sub) return;
 
-                setName(sub.name || '');
+                setName(sub.service || sub.name || '');
                 setPeriodicity(toEnum(sub.periodicity, 'MONTHLY'));
                 setStatus(sub.status || 'active');
 
