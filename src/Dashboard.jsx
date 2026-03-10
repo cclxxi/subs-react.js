@@ -58,7 +58,8 @@ const Dashboard = ({ onLogout }) => {
 
     const totalMonthly = useMemo(() => {
         return subs.reduce((sum, item) => {
-            if (item.periodicity === 'monthly') return sum + Number(item.price || 0);
+            const periodicity = String(item.periodicity || '').toUpperCase();
+            if (periodicity === 'MONTHLY') return sum + Number(item.price || 0);
             return sum;
         }, 0);
     }, [subs]);
@@ -168,19 +169,19 @@ const Dashboard = ({ onLogout }) => {
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: i * 0.08 }}
-                                        className="p-6 bg-gradient-to-br from-gray-900 to-black rounded-[2rem] text-white shadow-2xl"
+                                        className="p-6 bg-gradient-to-br from-slate-950 via-gray-900 to-black rounded-[2rem] text-white shadow-2xl ring-1 ring-white/20"
                                     >
                                         <div className="flex justify-between items-start gap-2">
-                                            <p className="font-bold tracking-tight opacity-80 uppercase text-[10px] italic">{card.name}</p>
+                                            <p className="font-bold tracking-tight text-xs text-white/90 uppercase">{card.name}</p>
                                             <button
                                                 type="button"
                                                 onClick={() => handleDeleteCard(card.id)}
-                                                className="text-xs text-red-300 hover:text-red-100"
+                                                className="text-xs text-red-200 hover:text-red-100"
                                             >
                                                 Удалить
                                             </button>
                                         </div>
-                                        <p className="mt-8 text-2xl font-medium tracking-[0.2em]">•••• {card.last4}</p>
+                                        <p className="mt-8 text-2xl font-semibold tracking-[0.2em] text-white">•••• {card.last4}</p>
                                     </Motion.div>
                                 ))
                             ) : (
@@ -208,7 +209,7 @@ const Dashboard = ({ onLogout }) => {
                                             <div>
                                                 <p className="font-bold text-gray-900 text-lg">{sub.name}</p>
                                                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                                                    {sub.periodicity} {sub.status ? `• ${sub.status}` : ''}
+                                                    {formatPeriodicity(sub.periodicity)} {sub.status ? `• ${sub.status}` : ''}
                                                 </p>
                                             </div>
                                         </div>
@@ -297,6 +298,20 @@ const EmptyState = ({ text }) => (
         <p className="text-gray-400 text-sm font-medium">{text}</p>
     </div>
 );
+
+const PERIODICITY_LABELS = {
+    DAILY: 'раз в день',
+    WEEKLY: 'раз в неделю',
+    MONTHLY: 'раз в месяц',
+    YEARLY: 'раз в год',
+    ANNUALLY: 'ежегодно',
+    SEMIANNUALLY: 'раз в полгода',
+};
+
+const formatPeriodicity = (value) => {
+    const key = String(value || '').toUpperCase();
+    return PERIODICITY_LABELS[key] || 'период не указан';
+};
 
 const getEmoji = (name = '') => {
     const n = name.toLowerCase();

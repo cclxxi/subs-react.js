@@ -4,19 +4,19 @@ import { dataService } from './api';
 import { useToast } from './toast';
 
 const PERIODICITY_OPTIONS = [
-    { value: 'daily', label: 'Daily' },
-    { value: 'weekly', label: 'Weekly' },
-    { value: 'monthly', label: 'Monthly' },
-    { value: 'yearly', label: 'Yearly' },
-    { value: 'annually', label: 'Annually' },
-    { value: 'semiannually', label: 'Semiannually' },
+    { value: 'DAILY', label: 'Каждый день' },
+    { value: 'WEEKLY', label: 'Раз в неделю' },
+    { value: 'MONTHLY', label: 'Раз в месяц' },
+    { value: 'YEARLY', label: 'Раз в год' },
+    { value: 'ANNUALLY', label: 'Ежегодно' },
+    { value: 'SEMIANNUALLY', label: 'Раз в полгода' },
 ];
 
 const AddSubModal = ({ isOpen, onClose, onAdded, cards }) => {
     const toast = useToast();
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
-    const [periodicity, setPeriodicity] = useState('monthly');
+    const [periodicity, setPeriodicity] = useState('MONTHLY');
     const [cardId, setCardId] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -26,7 +26,7 @@ const AddSubModal = ({ isOpen, onClose, onAdded, cards }) => {
     const resetState = () => {
         setName('');
         setPrice('');
-        setPeriodicity('monthly');
+        setPeriodicity('MONTHLY');
         setCardId('');
         setError('');
     };

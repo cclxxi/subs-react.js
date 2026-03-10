@@ -3,8 +3,20 @@ import { AnimatePresence, motion as Motion } from 'framer-motion';
 import { dataService } from './api';
 import { useToast } from './toast';
 
-const PERIODICITY_OPTIONS = ['daily', 'weekly', 'monthly', 'yearly', 'annually', 'semiannually'];
+const PERIODICITY_OPTIONS = [
+    { value: 'DAILY', label: 'Каждый день' },
+    { value: 'WEEKLY', label: 'Раз в неделю' },
+    { value: 'MONTHLY', label: 'Раз в месяц' },
+    { value: 'YEARLY', label: 'Раз в год' },
+    { value: 'ANNUALLY', label: 'Ежегодно' },
+    { value: 'SEMIANNUALLY', label: 'Раз в полгода' },
+];
 const STATUS_OPTIONS = ['active', 'paused', 'canceled'];
+
+const toEnum = (value, fallback = 'MONTHLY') => {
+    if (!value) return fallback;
+    return String(value).toUpperCase();
+};
 
 const EditSubModal = ({ isOpen, onClose, onUpdated, cards, subscriptionId }) => {
     const toast = useToast();
@@ -13,7 +25,7 @@ const EditSubModal = ({ isOpen, onClose, onUpdated, cards, subscriptionId }) => 
     const [error, setError] = useState('');
 
     const [name, setName] = useState('');
-    const [periodicity, setPeriodicity] = useState('monthly');
+    const [periodicity, setPeriodicity] = useState('MONTHLY');
     const [status, setStatus] = useState('active');
     const [cardId, setCardId] = useState('');
 
@@ -35,7 +47,7 @@ const EditSubModal = ({ isOpen, onClose, onUpdated, cards, subscriptionId }) => 
                 if (!mounted || !sub) return;
 
                 setName(sub.name || '');
-                setPeriodicity(sub.periodicity || 'monthly');
+                setPeriodicity(toEnum(sub.periodicity, 'MONTHLY'));
                 setStatus(sub.status || 'active');
 
                 if (sub.cardId) {
@@ -133,8 +145,8 @@ const EditSubModal = ({ isOpen, onClose, onUpdated, cards, subscriptionId }) => 
                                         className="w-full px-5 py-4 bg-gray-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none"
                                     >
                                         {PERIODICITY_OPTIONS.map((option) => (
-                                            <option key={option} value={option}>
-                                                {option}
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
                                             </option>
                                         ))}
                                     </select>
