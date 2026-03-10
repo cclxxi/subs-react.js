@@ -11,7 +11,11 @@ const PERIODICITY_OPTIONS = [
     { value: 'ANNUALLY', label: 'Ежегодно' },
     { value: 'SEMIANNUALLY', label: 'Раз в полгода' },
 ];
-const STATUS_OPTIONS = ['active', 'paused', 'canceled'];
+const STATUS_OPTIONS = [
+    { value: 'active', label: 'Активна' },
+    { value: 'paused', label: 'На паузе' },
+    { value: 'canceled', label: 'Отменена' },
+];
 
 const toEnum = (value, fallback = 'MONTHLY') => {
     if (!value) return fallback;
@@ -160,8 +164,8 @@ const EditSubModal = ({ isOpen, onClose, onUpdated, cards, subscriptionId }) => 
                                         className="w-full px-5 py-4 bg-gray-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none"
                                     >
                                         {STATUS_OPTIONS.map((option) => (
-                                            <option key={option} value={option}>
-                                                {option}
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
                                             </option>
                                         ))}
                                     </select>

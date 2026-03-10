@@ -222,8 +222,8 @@ const Dashboard = ({ onLogout }) => {
                                             </div>
                                             <div>
                                                 <p className="font-bold text-gray-900 text-lg">{sub.service || sub.name || 'Без названия'}</p>
-                                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                                                    {formatPeriodicity(sub.periodicity)} {sub.status ? `• ${sub.status}` : ''}
+                                                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                                    {formatPeriodicity(sub.periodicity)} {sub.status ? `• ${formatStatus(sub.status)}` : ''}
                                                 </p>
                                             </div>
                                         </div>
@@ -234,18 +234,18 @@ const Dashboard = ({ onLogout }) => {
                                             <p className="text-[11px] text-gray-400 mt-1">
                                                 {formatMoney(Number(sub.price || 0), normalizeCurrency(sub.currency))}
                                             </p>
-                                            <div className="flex gap-3 justify-end mt-1">
+                                            <div className="flex gap-2 justify-end mt-2">
                                                 <button
                                                     type="button"
                                                     onClick={() => openEditSub(sub.id)}
-                                                    className="text-xs text-indigo-600 hover:text-indigo-700"
+                                                    className="px-3 py-1.5 rounded-xl text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 hover:border-indigo-200 transition"
                                                 >
                                                     Редактировать
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={() => handleDeleteSub(sub.id)}
-                                                    className="text-xs text-red-500 hover:text-red-600"
+                                                    className="px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-100 hover:bg-rose-100 hover:border-rose-200 transition"
                                                 >
                                                     Удалить
                                                 </button>
@@ -351,6 +351,17 @@ const formatMoney = (amount, currency) => {
         currency: code,
         maximumFractionDigits: 2,
     }).format(Number(amount || 0));
+};
+
+const STATUS_LABELS = {
+    ACTIVE: 'активна',
+    PAUSED: 'на паузе',
+    CANCELED: 'отменена',
+};
+
+const formatStatus = (value) => {
+    const key = String(value || '').toUpperCase();
+    return STATUS_LABELS[key] || String(value || '').toLowerCase();
 };
 
 const PERIODICITY_LABELS = {
