@@ -1,50 +1,69 @@
 # Subscriptions Tracker Frontend
 
-Frontend-приложение на React + Vite для управления подписками и банковскими картами.
+Frontend-приложение на React + Vite для управления подписками и картами.
 
-## Что реализовано
+## Быстрый старт
 
-- Регистрация и логин с JWT-токеном
-- Дашборд с загрузкой:
-  - карт пользователя
-  - активных подписок
-  - ближайших списаний
-- Добавление карты
-- Добавление подписки с привязкой к карте
-- Удаление подписки
-- UI на Tailwind CSS + анимации через Framer Motion
+```bash
+npm install
+cp .env.example .env
+npm run dev
+```
 
-## API
+## Конфигурация API
 
-По умолчанию фронтенд ходит в:
+Используется переменная окружения `VITE_API_BASE_URL`.
 
-`http://localhost:3000/api`
-
-Можно переопределить через `.env`:
+Пример для локальной разработки:
 
 ```env
 VITE_API_BASE_URL=http://localhost:3000/api
 ```
 
-## Установка и запуск
+Пример для Railway backend:
 
-```bash
-npm install
-npm run dev
+```env
+VITE_API_BASE_URL=https://your-backend.railway.app/api
 ```
 
-## Проверка качества
+Важно: значение должно включать суффикс `/api`.
+
+## Скрипты
 
 ```bash
+npm run dev
 npm run lint
 npm run build
+npm run preview
+npm run start
 ```
 
-## Структура
+- `start` запускает production-сборку на порту из `PORT` (под Railway).
 
-- `src/api.js` - API-слой и обработка ответов
-- `src/Dashboard.jsx` - основной экран после логина
-- `src/AddCardModal.jsx` - модалка добавления карты
-- `src/AddSubModal.jsx` - модалка добавления подписки
-- `src/Login.jsx` - логин
-- `src/Register.jsx` - регистрация
+## Деплой на Railway (frontend)
+
+1. Создай новый проект на Railway и подключи этот репозиторий.
+2. Railway автоматически подхватит `railway.toml`.
+3. В Variables добавь:
+   - `VITE_API_BASE_URL=https://<backend-service>.railway.app/api`
+4. Запусти Deploy.
+
+Что происходит при деплое:
+- build: `npm ci && npm run build`
+- start: `npm run start`
+
+## Подключение к backend на Railway
+
+1. Задеплой backend сервис.
+2. Скопируй public URL backend.
+3. Убедись, что backend CORS разрешает домен frontend-сервиса.
+4. В frontend-сервисе обнови `VITE_API_BASE_URL` и перезапусти деплой.
+
+## Локальная проверка production-режима
+
+```bash
+npm run build
+PORT=3000 npm run start
+```
+
+После этого открой `http://localhost:3000`.
